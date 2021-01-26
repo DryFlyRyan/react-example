@@ -42,6 +42,30 @@ function App() {
     updateIsSearching(false);
   }
 
+  const handleSearchOrderChange = (order) => {
+    if (searchQuery && order.value !== searchOrder.value) {
+      searchRepositories({
+        order: order.value,
+        page: 1,
+      });
+    }
+
+    updateCurrentPage(1);
+    updateSearchOrder(order);
+  }
+
+  const handleSearchSortChange = (sort) => {
+    if (searchQuery && sort.value !== searchSort.value) {
+      searchRepositories({
+        sort: sort.value,
+        page: 1,
+      });
+    }
+
+    updateCurrentPage(1);
+    updateSearchSort(sort);
+  }
+
   return (
     <div className="App">
         <Search
@@ -51,8 +75,8 @@ function App() {
           searchRepos={searchRepositories}
           searchOrder={searchOrder}
           searchSort={searchSort}
-          onOrderChange={() => {}}
-          onSortChange={() => {}}
+          onOrderChange={handleSearchOrderChange}
+          onSortChange={handleSearchSortChange}
         />
       {/* <ContentWindow /> */}
     </div>

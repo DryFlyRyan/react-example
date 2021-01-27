@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  ResultList,
   Search,
 } from './components';
 
@@ -9,7 +10,6 @@ import { fetchGithubRepositories } from './dataHandlers'
 function App() {
   const [currentPage, updateCurrentPage] = useState(1);
   const [isSearching, updateIsSearching] = useState(false);
-  const [previousSearchQuery, updatePreviousSearchQuery] = useState('')
   const [searchOrder, updateSearchOrder] = useState({ value: 'desc', label: 'Descending'},);
   const [searchQuery, updateSearchQuery] = useState('');
   const [searchResults, updateSearchResults] = useState({});
@@ -20,24 +20,20 @@ function App() {
     order = searchOrder.value,
     sort = searchSort.value,
   } = {}) => {
-    console.log('hitting', searchQuery)
     if (searchQuery === '') {
       return;
     }
 
-    const searchPage = searchQuery === previousSearchQuery ? page : 1;
-    updateCurrentPage(searchPage)
     updateIsSearching(true);
 
     const response = await fetchGithubRepositories({
       q: searchQuery,
-      page: searchPage,
+      page,
       per_page: 10,
       order,
       sort,
     });
 
-    updatePreviousSearchQuery(searchQuery)
     updateSearchResults(response);
     updateIsSearching(false);
   }
@@ -78,7 +74,9 @@ function App() {
           onOrderChange={handleSearchOrderChange}
           onSortChange={handleSearchSortChange}
         />
-      {/* <ContentWindow /> */}
+        <ResultList
+          searchResults={searchResults}
+        />
     </div>
   );
 }

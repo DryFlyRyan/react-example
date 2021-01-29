@@ -33,7 +33,6 @@ const ResultList = ({
     items: [],
     total_count: 0,
   },
-  changePageNumber,
 } = {}) => {
   const {
     items: results,
@@ -49,28 +48,12 @@ const ResultList = ({
         </CountText>
       </TopBar>
       {ResultCards}
-      {/* <PaginationContainer>
-        <PaginationButton
-          onClick={() => changePageNumber(currentPage - 1)}
-          disabled={currentPage <= 1}
-        >
-          {'< Previous'}
-        </PaginationButton>
-        <PaginationButton
-          onClick={() => changePageNumber(currentPage + 1)}
-        >
-          {'Next >'}
-        </PaginationButton>
-      </PaginationContainer> */}
     </StyledResultListContainer>
   )
 }
 
 ResultList.propTypes = {
-  results: PropTypes.arrayOf(PropTypes.shape()).isRequired,
-  resultCount: PropTypes.number.isRequired,
-  currentPage: PropTypes.number.isRequired,
-  changePageNumber: PropTypes.func.isRequired,
+  searchResults: PropTypes.shape().isRequired,
 };
 
 export default ResultList;

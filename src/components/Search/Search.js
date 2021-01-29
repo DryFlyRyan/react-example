@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { useHistory } from "react-router-dom";
 import Select from 'react-select';
+
+import { searchOrders, searchSorts, queryDefaults } from '../../enums';
+import {
+  useQuery,
+  createQueryParams,
+  useFindSearchOrder,
+  useFindSearchSort,
+  useGetSearchQuery,
+} from '../../utils';
 
 import {
   Banner,
@@ -13,36 +23,37 @@ import {
   SelectContainer,
 } from './Search.styles';
 
-const searchSorts = [
-  { value: '', label: 'Best Match'},
-  { value: 'stars', label: 'Stars'},
-  { value: 'forks', label: 'Forks'},
-  { value: 'help-wanted-issues', label: 'Help Wanted Issues'},
-  { value: 'updated', label: 'Updated'},
-];
+const Search = ({ isSearching }) => {
+  const searchQueryRouteParam = useGetSearchQuery();
+  const [searchQuery, updateSearchQuery] = useState(searchQueryRouteParam);
+  const history = useHistory();
+  const query = useQuery();
 
-const order = [
-  { value: 'desc', label: 'Descending'},
-  { value: 'asc', label: 'Ascending'},
-];
-
-const Search = ({
-  searchQuery,
-  onChange,
-  searchRepos,
-  isSearching,
-  searchOrder,
-  searchSort,
-  onOrderChange,
-  onSortChange,
-}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    return searchRepos();
+
+    history.push({
+      pathname: searchQuery,
+      search: createQueryParams({ ...queryDefaults, ...query }),
+    });
   }
 
-  const handleSearchSortChange = (selection) => onSortChange(selection);
-  const handleSearchOrderChange = (selection) => onOrderChange(selection);
+  const handleSearchSortChange = (selection) => history.push({
+    search: createQueryParams({
+      ...query,
+      sort: selection.value,
+      order: selection.value
+        ? query.order
+        : searchOrders[0].value,
+    })
+  })
+  
+  const handleSearchOrderChange = (selection) => history.push({
+    search: createQueryParams({ ...query, order: selection.value })
+  })
+
+  const sortValue = useFindSearchSort();
+  const orderValue = useFindSearchOrder();
 
   return (
     <Banner>
@@ -59,7 +70,7 @@ const Search = ({
               name="search"
               placeholder="Search ..."
               value={searchQuery}
-              onChange={onChange}
+              onChange={e => updateSearchQuery(e.target.value)}
             />
             <LoadingIcon
               icon={faSpinner}
@@ -70,15 +81,15 @@ const Search = ({
       </GrowContainer>
       <SelectContainer>
         <Select
-          value={searchSort}
+          value={sortValue}
           options={searchSorts}
           onChange={handleSearchSortChange}
         />
         <Select
-          value={searchOrder}
-          options={order}
+          value={orderValue}
+          options={searchOrders}
           onChange={handleSearchOrderChange}
-          isDisabled={searchSort.value === ''}
+          isDisabled={sortValue.value === ''}
         />
       </SelectContainer>
     </Banner>
@@ -86,14 +97,7 @@ const Search = ({
 };
 
 Search.propTypes = {
-  searchQuery: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-  searchRepos: PropTypes.func.isRequired,
   isSearching: PropTypes.bool.isRequired,
-  searchOrder: PropTypes.shape().isRequired,
-  searchSort: PropTypes.shape().isRequired,
-  onOrderChange: PropTypes.func.isRequired,
-  onSortChange: PropTypes.func.isRequired,
 };
 
 export default Search;

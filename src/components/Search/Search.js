@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from "react-router-dom";
@@ -29,12 +29,32 @@ const Search = ({ isSearching }) => {
   const history = useHistory();
   const query = useQuery();
 
+  const {
+    per_page,
+    ...pageDefaults
+  } = queryDefaults;
+
+  useEffect(() => {
+    const setDefaultQueryParams = () => {
+      if (!searchQueryRouteParam) {
+        return;
+      }
+  
+      history.push({
+        pathname: searchQuery,
+        search: createQueryParams({ ...pageDefaults, ...query }),
+      });
+    }
+
+    setDefaultQueryParams();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     history.push({
       pathname: searchQuery,
-      search: createQueryParams({ ...queryDefaults, ...query }),
+      search: createQueryParams({ ...pageDefaults, ...query }),
     });
   }
 

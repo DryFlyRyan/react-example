@@ -9,6 +9,7 @@ import {
   Search,
 } from './components';
 
+import { queryDefaults } from './enums';
 import { fetchGithubRepositories } from './dataHandlers'
 import { useGetSearchQuery, useQuery } from './utils';
 
@@ -42,7 +43,7 @@ function App() {
         sort,
         page,
         q: searchQuery,
-        per_page: 10,
+        per_page: queryDefaults.per_page,
       });
       
       updateSearchResults(response);

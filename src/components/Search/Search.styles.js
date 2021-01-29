@@ -26,7 +26,6 @@ export const Banner = styled.header`
   }
 `;
 
-
 export const SelectContainer = styled.div`
   display: flex;
   justify-content: flex-end;

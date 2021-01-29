@@ -1,14 +1,20 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+
 import ResultCard from '../ResultCard/ResultCard';
 
 import {
   StyledResultListContainer,
   TopBar,
   CountText,
-  // PaginationContainer,
-  // PaginationButton,
+  PaginationContainer,
+  PaginationButton,
+  PaginationButtonIcon,
 } from './ResultList.styles';
+import { queryDefaults } from '../../enums';
+import { useQuery, createQueryParams } from '../../utils';
+import { useHistory } from 'react-router-dom';
 
 const buildResults = (results) => {
   if (!results) {
@@ -34,20 +40,66 @@ const ResultList = ({
     total_count: 0,
   },
 } = {}) => {
+  const history = useHistory();
   const {
     items: results,
     total_count: resultCount,
   } = searchResults;
 
-  const ResultCards = useMemo(() => buildResults(results), [results])
+  const query = useQuery();
+  const { page } = query;
+  const pageNumber = parseInt(page, 10);
+
+  const isLastPage = useMemo(() => {
+    return (
+      !resultCount
+      || results.length < queryDefaults.per_page // Miiiight be a little risky
+      || (pageNumber * queryDefaults.per_page) + 1 > resultCount
+    );
+  }, [resultCount, results, pageNumber])
+
+  const incrementPage = () => {
+    if (isLastPage) {
+      return;
+    }
+
+    history.push({ search: createQueryParams({ ...query, page: pageNumber + 1 })})
+  }
+
+  const decrementPage = () => {
+    if (pageNumber <= 1) {
+      return;
+    }
+
+    history.push({ search: createQueryParams({ ...query, page: pageNumber - 1 })})
+  }
+
   return (
     <StyledResultListContainer>
       <TopBar>
         <CountText>
-          {formatCountText(resultCount || 0)}
+          {formatCountText(resultCount || 0) /* we should never see zero here unless that's in the call, so mainly an extra fallback */}
         </CountText>
+        <PaginationContainer>
+          <PaginationButton
+            disabled={!page || pageNumber <= 1}
+            onClick={decrementPage}
+          >
+            <PaginationButtonIcon
+              icon={faChevronLeft}
+            />
+          </PaginationButton>
+          <PaginationButton
+            disabled={isLastPage}
+            onClick={incrementPage}
+          >
+            <PaginationButtonIcon
+              icon={faChevronRight}
+            />
+          </PaginationButton>
+        </PaginationContainer>
       </TopBar>
-      {ResultCards}
+      {useMemo(() => buildResults(results), [results])}
     </StyledResultListContainer>
   )
 }

@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { useHistory } from 'react-router-dom';
+
+import { queryDefaults } from '../../enums';
+import { createQueryParams } from '../../utils';
+import { useQuery } from '../../hooks';
 
 import ResultCard from '../ResultCard/ResultCard';
 
@@ -12,9 +17,7 @@ import {
   PaginationButton,
   PaginationButtonIcon,
 } from './ResultList.styles';
-import { queryDefaults } from '../../enums';
-import { useQuery, createQueryParams } from '../../utils';
-import { useHistory } from 'react-router-dom';
+
 
 const buildResults = (results) => {
   if (!results) {
@@ -82,6 +85,7 @@ const ResultList = ({
         </CountText>
         <PaginationContainer>
           <PaginationButton
+            data-testid="decrement-page-button"
             disabled={!page || pageNumber <= 1}
             onClick={decrementPage}
           >
@@ -90,6 +94,7 @@ const ResultList = ({
             />
           </PaginationButton>
           <PaginationButton
+            data-testid="increment-page-button"
             disabled={isLastPage}
             onClick={incrementPage}
           >

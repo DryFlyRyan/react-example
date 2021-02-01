@@ -4,14 +4,20 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useHistory } from "react-router-dom";
 import Select from 'react-select';
 
-import { searchOrders, searchSorts, queryDefaults } from '../../enums';
+import {
+  searchOrders,
+  searchSorts,
+  queryDefaults,
+} from '../../enums';
+
+import { createQueryParams } from '../../utils';
+
 import {
   useQuery,
-  createQueryParams,
   useFindSearchOrder,
   useFindSearchSort,
   useGetSearchQuery,
-} from '../../utils';
+} from '../../hooks';
 
 import {
   Banner,
@@ -84,6 +90,7 @@ const Search = ({ isSearching }) => {
         >
           <HiddenLabel>
             <SearchInput
+              data-testid="search-input"
               spellCheck="false"
               autoComplete="off"
               type="text"
@@ -101,11 +108,13 @@ const Search = ({ isSearching }) => {
       </GrowContainer>
       <SelectContainer>
         <Select
+          data-testid="sort-select"
           value={sortValue}
           options={searchSorts}
           onChange={handleSearchSortChange}
         />
         <Select
+          data-testid="order-select"
           value={orderValue}
           options={searchOrders}
           onChange={handleSearchOrderChange}
@@ -117,7 +126,11 @@ const Search = ({ isSearching }) => {
 };
 
 Search.propTypes = {
-  isSearching: PropTypes.bool.isRequired,
+  isSearching: PropTypes.bool,
 };
+
+Search.defaultProps = {
+  isSearching: false,
+}
 
 export default Search;

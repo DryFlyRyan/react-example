@@ -11,7 +11,7 @@ import {
 
 import { queryDefaults } from './enums';
 import { fetchGithubRepositories } from './dataHandlers'
-import { useGetSearchQuery, useQuery } from './utils';
+import { useGetSearchQuery, useQuery } from './hooks';
 
 function App() {
   const [isSearching, updateIsSearching] = useState(false);

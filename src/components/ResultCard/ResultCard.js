@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { formatDate } from '../../utils';
 
 import {
@@ -61,6 +62,21 @@ const ResultCard = ({ result }) => (
     >
     </LanguageTab>
   </ResultCardContainer>
-)
+);
+
+ResultCard.propTypes = {
+  result: PropTypes.shape({
+    created_at: PropTypes.string,
+    description: PropTypes.string,
+    homepage: PropTypes.string,
+    html_url: PropTypes.string.isRequired,
+    language: PropTypes.string,
+    name: PropTypes.string,
+    owner: PropTypes.shape({
+      avatar_url: PropTypes.string.isRequired,
+    }).isRequired,
+    updated_at: PropTypes.string,
+  }).isRequired,
+};
 
 export default ResultCard;
